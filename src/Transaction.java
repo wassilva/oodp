@@ -1,5 +1,6 @@
 import java.math.BigDecimal;
 
+//DTO com as informações de uma transação
 public class Transaction {
 
     private String sellerCompany;

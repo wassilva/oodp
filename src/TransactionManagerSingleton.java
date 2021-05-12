@@ -1,5 +1,7 @@
 import java.util.*;
 
+//Classe que representa um controlador de transação.
+//Foi utilizado o padrão singleton pois precisavamos ter um objeto único que controle todas as transações durante o funcionamento do programa.
 public class TransactionManagerSingleton {
 
     private static TransactionManagerSingleton instance;
@@ -7,8 +9,10 @@ public class TransactionManagerSingleton {
     private Map<String, List<Transaction>> transactions = new HashMap<String, List<Transaction>>();
 
 
+    //Construtor privado para que não seja possível instancias o objeto a não ser chamando o getInstance()
     private TransactionManagerSingleton(){}
 
+    //Método estatico que garante que apenas uma instancia existira durante o funcionamento do programa.
     public static TransactionManagerSingleton getInstance(){
         if(instance == null){
             instance = new TransactionManagerSingleton();

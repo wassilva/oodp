@@ -2,6 +2,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+//Classe que representa um deposito com todas suas informações e comportamentos.
 public class Depot {
 
     private String name;
@@ -24,6 +25,7 @@ public class Depot {
         this.company = company;
     }
 
+//    Método que valida os limites de estoque do depósito
     private void validateProductQuantity(List<NativeProduct> nativeProducts, List<ExternalProduct> externalProducts){
         if(nativeProducts.size() < 15 || nativeProducts.size() > 50){
             throw new ValidationException("Invalid quantity for native products.");
@@ -32,9 +34,13 @@ public class Depot {
         }
     }
 
+    // Método responsável por fazer a venda de um produto e receber o produto de volta.
     public void sellNativeProductTo(Depot depotClientCompany) {
         if(this.nativeProducts.size() <= 15) throw new SelfDepotTransactionNotAllowedException("Native product inventory has reached its limit: " + this.nativeProducts.size());
 
+//        Aqui foi criado uma lista temporaria para que fosse possível manipular os objetos
+//        de produtos dentro do laço. Caso usassemos a propria lista não poderiamos remover o produto
+//        no momento em que ele foi vendido
         List<NativeProduct> tempListNativeProducts = new ArrayList<NativeProduct>();
         tempListNativeProducts.addAll(nativeProducts);
 
@@ -51,12 +57,14 @@ public class Depot {
             this.cashAllowance = cashAllowance.add(productPrice);
             nativeProducts.remove(nativeProducts.size() - 1);
 
+            //Cria transação
             Transaction transaction = new Transaction(this.company.getName(), depotClientCompany.getCompany().getName(),
                                                         np.getName(), null, this.productPrice, null,
                                                         this.name, depotClientCompany.getName());
 
             TransactionManagerSingleton transactionManager = TransactionManagerSingleton.getInstance();
 
+//            Segunda parte da transação, valida se o deposito que fez a venda pode receber produtos externos
             if(externalProducts.size() < 40){
                 //Pega o produto de troca do deposito
                 final Product tradeProductAfterBuy = depotClientCompany.getTradeProductAfterBuy();
@@ -68,12 +76,12 @@ public class Depot {
                 transactionManager.addTransaction(transaction);
                 throw new SelfDepotTransactionNotAllowedException("Second part of transaction failed, external products: " + externalProducts.size() + " units");
             }
-
             transactionManager.addTransaction(transaction);
         });
 
     }
 
+    // Esse método é invocado após uma compra, ao comprar um produto de um outro depósito é necessário realizar a troca.
     private Product getTradeProductAfterBuy() {
         if(nativeProducts.size() <= 15){
             throw new TradeProductNotAllowedException("Second part of transaction failed, , depot " + name + " inventory has reached its limit of native products.");
@@ -85,11 +93,9 @@ public class Depot {
         return nativeProduct;
     }
 
-
+    //Recebe um produto externo e o adiciona ao depósito
     public void receiveExternalProduct(Product externalProduct, BigDecimal price){
         if(externalProducts.size() >= 40) throw new TransactionNotAllowed("Not allowed add external product to : " + name + " external products inventory with " + this.externalProducts.size() + " units.");
-
-
         // deve tirar do cashallowance o valor do externalProduct
         this.cashAllowance = cashAllowance.subtract(price);
 

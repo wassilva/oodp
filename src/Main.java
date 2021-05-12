@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -15,13 +14,13 @@ public class Main {
 
         validateInput(option);
 
-        Trade trade = TradeFactory.getTrade(option);
-        printCompaniesGeneralView(trade);
+        Trade companyDepotTrade = TradeFactory.getTrade(option);
+        printCompaniesGeneralView(companyDepotTrade);
 
-        trade.execute();
+        companyDepotTrade.execute();
 
         printTransactions();
-        printCompaniesGeneralView(trade);
+        printCompaniesGeneralView(companyDepotTrade);
         Output.generateFile();
     }
 
@@ -50,6 +49,7 @@ public class Main {
 
     }
 
+//    Valida se a empresa escolhida via console está de acordo com o esperado
     private static void validateInput(String option) {
         if (!option.equals("a") && !option.equals("b") && !option.equals("c")){
             throw new ValidationException("Invalid company");
@@ -57,9 +57,10 @@ public class Main {
     }
 
     private static void printCompaniesGeneralView(Trade trade){
-        List<Company> clientsCompany = trade.getClientsCompany();
+        CompanyDepotTrade companyDepotTrade = (CompanyDepotTrade) trade;
+        List<Company> clientsCompany = companyDepotTrade.getClientsCompany();
         List<Company> companies = clientsCompany.stream().map(c -> c).collect(Collectors.toList());
-        companies.add(trade.getTraderCompany());
+        companies.add(companyDepotTrade.getTraderCompany());
 
 
         companies.forEach( company -> {

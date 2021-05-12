@@ -4,6 +4,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/*
+Classe que representa uma Empresa no programa.
+Essa classe ao ser criada via construtor ja é criado
+de forma automatica 50 depositos com variantes quantidades
+de produtos externos e nativo
+ */
 public class Company {
 
     private final int MAX_DEPOTS_QUANTITY = 50;
@@ -22,6 +28,11 @@ public class Company {
         this.generateDepots();
     }
 
+    /*
+    Método que cria os 50 depósitos com seus produtos.
+    A quantidade de produtos que cada depósito terá é escolhida de forma randomica
+    Através da classe helper RandomNumberHelper.
+    */
     private void generateDepots(){
         this.depots = new ArrayList<Depot>();
         for(int i=0; i<MAX_DEPOTS_QUANTITY; i++){
